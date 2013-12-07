@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Serializes the model to and from a stream as xml.
+ * Serializes an XML stream to a {@link Site}.
  * 
  * @author peter
  * 
