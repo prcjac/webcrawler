@@ -15,7 +15,13 @@
     	<sequence>
     		<element name="outgoing" minOccurs="1" maxOccurs="unbounded"/>
     	</sequence>
-    	<attribute name="id" type="ID" use="optional"/>
+    	<attribute name="id" type="tns:root" use="optional"/>
     	<anyAttribute namespace="http://www.w3.org/XML/1998/namespace" processContents="lax"/>
     </complexType>
+
+    <simpleType name="root">
+    	<restriction base="string">
+    		<enumeration value="root" />
+    	</restriction>
+    </simpleType>
 </schema>
