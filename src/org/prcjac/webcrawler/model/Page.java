@@ -19,12 +19,12 @@ public interface Page {
 	/**
 	 * @return The set of relationships that link to this page.
 	 */
-	Set<Relationship> getIncomingRelationships();
+	Set<Relationship<Page, Page>> getIncomingRelationships();
 
 	/**
 	 * @return The set of relationships that this page links to.
 	 */
-	Set<Relationship> getOutgoingRelationships();
+	Set<Relationship<Page, Page>> getOutgoingRelationships();
 
 	/**
 	 * @return The set of pages that link to this page.

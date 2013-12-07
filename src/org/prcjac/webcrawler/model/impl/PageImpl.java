@@ -11,9 +11,9 @@ public class PageImpl implements Page {
 
 	private final URI _uri;
 
-	private Set<Relationship> _incoming = new LinkedHashSet<Relationship>();
+	private Set<Relationship<Page, Page>> _incoming = new LinkedHashSet<Relationship<Page, Page>>();
 
-	private Set<Relationship> _outgoing = new LinkedHashSet<Relationship>();
+	private Set<Relationship<Page, Page>> _outgoing = new LinkedHashSet<Relationship<Page, Page>>();
 
 	private final Set<Page> _incomingPages = new LinkedHashSet<Page>();
 
@@ -22,18 +22,23 @@ public class PageImpl implements Page {
 	private final boolean _isRoot;
 
 	public PageImpl(final URI uri, final boolean isRoot,
-			final Set<Relationship> incoming,
-			final Set<Relationship> outgoing) {
+			final Set<Relationship<Page, Page>> incoming,
+			final Set<Relationship<Page, Page>> outgoing) {
 		_uri = uri;
 		_isRoot = isRoot;
 		_incoming = incoming;
 		_outgoing = outgoing;
-		for (Relationship relationship: incoming) {
+		for (Relationship<Page, Page> relationship : incoming) {
 			_incomingPages.add(relationship.from());
 		}
-		for (Relationship relationship: outgoing) {
+		for (Relationship<Page, Page> relationship : outgoing) {
 			_incomingPages.add(relationship.to());
 		}
+	}
+
+	public PageImpl(final URI uri, final boolean isRoot) {
+		this(uri, isRoot, new LinkedHashSet<Relationship<Page, Page>>(),
+				new LinkedHashSet<Relationship<Page, Page>>());
 	}
 
 	@Override
@@ -42,21 +47,23 @@ public class PageImpl implements Page {
 	}
 
 	@Override
-	public Set<Relationship> getIncomingRelationships() {
+	public Set<Relationship<Page, Page>> getIncomingRelationships() {
 		return _incoming;
 	}
 
-	public void addIncomingRelationship(final Relationship relationship) {
+	public void addIncomingRelationship(
+			final Relationship<Page, Page> relationship) {
 		_incoming.add(relationship);
 		_incomingPages.add(relationship.from());
 	}
 
 	@Override
-	public Set<Relationship> getOutgoingRelationships() {
+	public Set<Relationship<Page, Page>> getOutgoingRelationships() {
 		return _outgoing;
 	}
 
-	public void addOutgoingRelationship(final Relationship relationship) {
+	public void addOutgoingRelationship(
+			final Relationship<Page, Page> relationship) {
 		_outgoing.add(relationship);
 		_outgoingPages.add(relationship.to());
 	}

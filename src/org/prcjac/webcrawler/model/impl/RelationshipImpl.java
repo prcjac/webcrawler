@@ -1,6 +1,5 @@
 package org.prcjac.webcrawler.model.impl;
 
-import org.prcjac.webcrawler.model.Page;
 import org.prcjac.webcrawler.model.Relationship;
 
 /**
@@ -8,25 +7,26 @@ import org.prcjac.webcrawler.model.Relationship;
  * the same URI.
  * 
  * @author peter
+ * @param <F>
  * 
  */
-public class RelationshipImpl implements Relationship {
+public class RelationshipImpl<F, T> implements Relationship<F, T> {
 
-	private final Page _from;
-	private final Page _to;
+	private final F _from;
+	private final T _to;
 
-	public RelationshipImpl(final Page from, final Page to) {
+	public RelationshipImpl(final F from, final T to) {
 		_from = from;
 		_to = to;
 	}
 
 	@Override
-	public Page from() {
+	public F from() {
 		return _from;
 	}
 
 	@Override
-	public Page to() {
+	public T to() {
 		return _to;
 	}
 

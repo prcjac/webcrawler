@@ -6,15 +6,15 @@ package org.prcjac.webcrawler.model;
  * @author peter
  * 
  */
-public interface Relationship {
+public interface Relationship<F, T> {
 
 	/**
 	 * @return The source of the relationship.
 	 */
-	Page from();
+	F from();
 
 	/**
 	 * @return The target of the relationship.
 	 */
-	Page to();
+	T to();
 }
