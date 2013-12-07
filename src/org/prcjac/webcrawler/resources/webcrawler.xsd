@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/webcrawler" xmlns:tns="http://www.example.org/webcrawler" elementFormDefault="qualified">
+
+    <element name="relationships" type="tns:relationships"></element>
+    <element name="page" type="tns:page"></element>
+    <element name="outgoing" type="anyURI"></element>
+        
+    <complexType name="relationships">
+    	<sequence>
+    		<element name="page" minOccurs="0" maxOccurs="unbounded"/>
+    	</sequence>
+    </complexType>
+    
+    <complexType name="page">
+    	<sequence>
+    		<element name="outgoing" minOccurs="1" maxOccurs="unbounded"/>
+    	</sequence>
+    	<attribute name="id" type="ID" use="optional"/>
+    	<anyAttribute namespace="http://www.w3.org/XML/1998/namespace" processContents="lax"/>
+    </complexType>
+</schema>
