@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/webcrawler" xmlns:tns="http://www.example.org/webcrawler" elementFormDefault="qualified">
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.prcjac.org/webcrawler" xmlns:tns="http://www.prcjac.org/webcrawler" elementFormDefault="qualified">
 
     <element name="relationships" type="tns:relationships"></element>
     <element name="page" type="tns:page"></element>
@@ -9,6 +9,7 @@
     	<sequence>
     		<element name="page" minOccurs="0" maxOccurs="unbounded"/>
     	</sequence>
+    	<attribute name="rootURI" type="anyURI" use="required"/>
     </complexType>
     
     <complexType name="page">
@@ -16,6 +17,7 @@
     		<element name="outgoing" minOccurs="1" maxOccurs="unbounded"/>
     	</sequence>
     	<attribute name="id" type="tns:root" use="optional"/>
+    	<attribute name="pageURI" type="anyURI" use="required" />
     	<anyAttribute namespace="http://www.w3.org/XML/1998/namespace" processContents="lax"/>
     </complexType>
 
