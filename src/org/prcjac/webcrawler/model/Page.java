@@ -29,10 +29,15 @@ public interface Page {
 	/**
 	 * @return The set of pages that link to this page.
 	 */
-	Set<Relationship> getIncomingPages();
+	Set<Page> getIncomingPages();
 
 	/**
 	 * @return The set of pages that this page links to.
 	 */
-	Set<Relationship> getOutgoingPages();
+	Set<Page> getOutgoingPages();
+
+	/**
+	 * @return Is page a root page.
+	 */
+	boolean isRoot();
 }
