@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<rogue xmlns="http://www.prcjac.org/webcrawler" xmlns:wc="http://www.prcjac.org/webcrawler"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<page id="root" pageURI="/" />
+</rogue> 

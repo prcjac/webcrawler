@@ -98,16 +98,19 @@ public class XMLToModel {
 		for (int i = 0; i < children.getLength(); i++) {
 			if (children.item(i) instanceof Element) {
 				Element pageElement = (Element) children.item(i);
-				URI pageURI = URI.create(pageElement.getAttribute("pageURI"));
-				boolean isRoot = pageElement.getAttribute("id").equals("root");
-				Set<URI> outgoingURIs = outgoingURIFromPageChildren(pageElement.getChildNodes());
-				Page page = new PageImpl(pageURI, isRoot);
-				_uriToPage.put(pageURI, page);
-				pages.add(page);
+				if (pageElement.getNamespaceURI() == ModelToXML.NAMESPACE
+						&& pageElement.getNodeName() == ModelToXML.PAGE) {
+					URI pageURI = URI.create(pageElement.getAttribute("pageURI"));
+					boolean isRoot = pageElement.getAttribute("id").equals("root");
+					Set<URI> outgoingURIs = outgoingURIFromPageChildren(pageElement.getChildNodes());
+					Page page = new PageImpl(pageURI, isRoot);
+					_uriToPage.put(pageURI, page);
+					pages.add(page);
 
-				for (URI uri : outgoingURIs) {
-					addRelationship(pageURI, uri, _outgoingRelationship);
-					addRelationship(uri, pageURI, _incomingRelationship);
+					for (URI uri : outgoingURIs) {
+						addRelationship(pageURI, uri, _outgoingRelationship);
+						addRelationship(uri, pageURI, _incomingRelationship);
+					}
 				}
 			}
 		}
@@ -119,7 +122,10 @@ public class XMLToModel {
 		for (int i = 0; i < children.getLength(); i++) {
 			if (children.item(i) instanceof Element) {
 				Element outgoingElement = (Element) children.item(i);
-				outGoing.add(URI.create(outgoingElement.getTextContent()));
+				if (outgoingElement.getNamespaceURI() == ModelToXML.NAMESPACE
+						&& outgoingElement.getNodeName() == ModelToXML.OUTGOING) {
+					outGoing.add(URI.create(outgoingElement.getTextContent()));
+				}
 			}
 		}
 		return outGoing;
@@ -138,16 +144,19 @@ public class XMLToModel {
 
 		@Override
 		public void error(final SAXParseException exception) throws SAXException {
+			System.err.println(exception);
 			throw exception;
 		}
 
 		@Override
 		public void fatalError(final SAXParseException exception) throws SAXException {
+			System.err.println(exception);
 			throw exception;
 		}
 
 		@Override
 		public void warning(final SAXParseException exception) throws SAXException {
+			System.err.println(exception);
 		}
 
 	}

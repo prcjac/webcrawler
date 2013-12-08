@@ -69,6 +69,18 @@ public class TestModelSerializer {
 	@Test(expected = ModelSerializationException.class)
 	public void testInvalidFailsGracefully1() throws URISyntaxException, IOException, ModelSerializationException {
 		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/invalid-no-rootURI.xml").toURI())));
-		Site site = serializer.getSite();
+		serializer.getSite();
+	}
+
+	@Test(expected = ModelSerializationException.class)
+	public void testInvalidFailsGracefully2() throws URISyntaxException, IOException, ModelSerializationException {
+		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/invalid-rogue-element.xml").toURI())));
+		serializer.getSite();
+	}
+
+	@Test(expected = ModelSerializationException.class)
+	public void testInvalidFailsGracefully3() throws URISyntaxException, IOException, ModelSerializationException {
+		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/empty.xml").toURI())));
+		serializer.getSite();
 	}
 }
