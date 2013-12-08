@@ -27,7 +27,6 @@ public class TestModelToXML {
 		new ModelToXML(createSite()).serializeSiteToOutputSource(byteArrayOutputStream);
 
 		String groundTruth = new String(Files.readAllBytes(Paths.get(TestModelToXML.class.getResource("resources/example2.xml").toURI())), Charset.forName("UTF-8"));
-		System.err.println(byteArrayOutputStream.toString());
 		assertEquals(groundTruth, byteArrayOutputStream.toString());
 	}
 
