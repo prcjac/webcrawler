@@ -61,7 +61,7 @@ public class ModelToXML {
 					RELATIONSHIPS);
 			rootRelationshipElement.setAttribute(ROOT_URI_ATTR, _site.getRootURI()
 					.toString());
-
+			document.appendChild(rootRelationshipElement);
 			for (Page page : _site.getAllPages()) {
 				buildPageElementAndAppend(page, rootRelationshipElement, document);
 			}
@@ -90,13 +90,14 @@ public class ModelToXML {
 				.getOutgoingRelationships()) {
 			buildOutgoingElementAndAppend(relationship, pageElement, document);
 		}
+		relationshipElement.appendChild(pageElement);
 	}
 
 	private void buildOutgoingElementAndAppend(
 			final Relationship<Page, Page> relationship,
 			final Element pageElement, final Document document) {
 		Element outgoingElement = document.createElementNS(NAMESPACE, OUTGOING);
-		outgoingElement.setNodeValue(relationship.to().getURI().toString());
+		outgoingElement.setTextContent(relationship.to().getURI().toString());
 		pageElement.appendChild(outgoingElement);
 	}
 }
