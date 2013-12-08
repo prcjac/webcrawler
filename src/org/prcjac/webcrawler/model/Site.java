@@ -25,4 +25,10 @@ public interface Site {
 	 * @return All of the pages in the site.
 	 */
 	Set<Page> getAllPages();
+
+	/**
+	 * @return The {@link Page} for the given {@link URI} or null if the uri
+	 *         isn't part of the site.
+	 */
+	Page getPageFromURI(URI uri);
 }
