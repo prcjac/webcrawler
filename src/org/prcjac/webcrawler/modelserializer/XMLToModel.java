@@ -42,8 +42,7 @@ public class XMLToModel {
 		_is = is;
 	}
 
-	public Site getSiteFromInputSource() throws IOException,
-			ModelSerializationException {
+	public Site getSite() throws IOException, ModelSerializationException {
 		_incomingRelationship.clear();
 		_outgoingRelationship.clear();
 		_uriToPage.clear();
@@ -53,10 +52,8 @@ public class XMLToModel {
 			factory.setValidating(false);
 			factory.setNamespaceAware(true);
 
-			SchemaFactory schemaFactory = SchemaFactory
-					.newInstance("http://www.w3.org/2001/XMLSchema");
-			Schema schema = schemaFactory.newSchema(XMLToModel.class
-					.getResource("../resources/webcrawler.xsd"));
+			SchemaFactory schemaFactory = SchemaFactory.newInstance("http://www.w3.org/2001/XMLSchema");
+			Schema schema = schemaFactory.newSchema(XMLToModel.class.getResource("../resources/webcrawler.xsd"));
 			factory.setSchema(schema);
 
 			DocumentBuilder builder = factory.newDocumentBuilder();
@@ -73,20 +70,22 @@ public class XMLToModel {
 	// schema validated.
 	protected Site getSiteFromDocument(final Document document) {
 		Element relationshipRootElement = document.getDocumentElement();
-		URI rootURI = URI.create(relationshipRootElement
-				.getAttribute("rootURI"));
-		Set<Page> pages = pagesFromRootElementChildren(relationshipRootElement
-				.getChildNodes());
+		URI rootURI = URI.create(relationshipRootElement.getAttribute("rootURI"));
+		Set<Page> pages = pagesFromRootElementChildren(relationshipRootElement.getChildNodes());
 		for (Page page : pages) {
 			URI pageUri = page.getURI();
+			if (_outgoingRelationship.get(pageUri) == null) {
+				_outgoingRelationship.put(pageUri, new LinkedHashSet<URI>());
+			}
+			if (_incomingRelationship.get(pageUri) == null) {
+				_incomingRelationship.put(pageUri, new LinkedHashSet<URI>());
+			}
 			for (URI targetURI : _outgoingRelationship.get(pageUri)) {
-				Relationship<Page, Page> outgoingRelationship = new RelationshipImpl<Page, Page>(
-						page, _uriToPage.get(targetURI));
+				Relationship<Page, Page> outgoingRelationship = new RelationshipImpl<Page, Page>(page, _uriToPage.get(targetURI));
 				((PageImpl) page).addOutgoingRelationship(outgoingRelationship);
 			}
 			for (URI targetURI : _incomingRelationship.get(pageUri)) {
-				Relationship<Page, Page> incomingRelationship = new RelationshipImpl<Page, Page>(
-						_uriToPage.get(targetURI), page);
+				Relationship<Page, Page> incomingRelationship = new RelationshipImpl<Page, Page>(_uriToPage.get(targetURI), page);
 				((PageImpl) page).addIncomingRelationship(incomingRelationship);
 			}
 		}
@@ -96,18 +95,19 @@ public class XMLToModel {
 	protected Set<Page> pagesFromRootElementChildren(final NodeList children) {
 		Set<Page> pages = new LinkedHashSet<Page>();
 		for (int i = 0; i < children.getLength(); i++) {
-			Element pageElement = (Element) children.item(i);
-			URI pageURI = URI.create(pageElement.getAttribute("pageURI"));
-			boolean isRoot = pageElement.getAttribute("id").equals("root");
-			Set<URI> outgoingURIs = outgoingURIFromPageChildren(pageElement
-					.getChildNodes());
-			Page page = new PageImpl(pageURI, isRoot);
-			_uriToPage.put(pageURI, page);
-			pages.add(page);
+			if (children.item(i) instanceof Element) {
+				Element pageElement = (Element) children.item(i);
+				URI pageURI = URI.create(pageElement.getAttribute("pageURI"));
+				boolean isRoot = pageElement.getAttribute("id").equals("root");
+				Set<URI> outgoingURIs = outgoingURIFromPageChildren(pageElement.getChildNodes());
+				Page page = new PageImpl(pageURI, isRoot);
+				_uriToPage.put(pageURI, page);
+				pages.add(page);
 
-			for (URI uri : outgoingURIs) {
-				addRelationship(pageURI, uri, _outgoingRelationship);
-				addRelationship(uri, pageURI, _incomingRelationship);
+				for (URI uri : outgoingURIs) {
+					addRelationship(pageURI, uri, _outgoingRelationship);
+					addRelationship(uri, pageURI, _incomingRelationship);
+				}
 			}
 		}
 		return pages;
@@ -116,14 +116,15 @@ public class XMLToModel {
 	protected Set<URI> outgoingURIFromPageChildren(final NodeList children) {
 		Set<URI> outGoing = new LinkedHashSet<URI>();
 		for (int i = 0; i < children.getLength(); i++) {
-			Element outgoingElement = (Element) children.item(i);
-			outGoing.add(URI.create(outgoingElement.getTextContent()));
+			if (children.item(i) instanceof Element) {
+				Element outgoingElement = (Element) children.item(i);
+				outGoing.add(URI.create(outgoingElement.getTextContent()));
+			}
 		}
 		return outGoing;
 	}
 
-	private static void addRelationship(final URI source,
-			final URI target, final Map<URI, Set<URI>> relationshipMap) {
+	private static void addRelationship(final URI source, final URI target, final Map<URI, Set<URI>> relationshipMap) {
 		Set<URI> targetSet = relationshipMap.get(source);
 		if (targetSet == null) {
 			targetSet = new LinkedHashSet<URI>();
