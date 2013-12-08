@@ -59,9 +59,7 @@ public class XMLToModel {
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.parse(_is);
 			return getSiteFromDocument(document);
-		} catch (SAXException e) {
-			throw new ModelSerializationException(e);
-		} catch (ParserConfigurationException e) {
+		} catch (SAXException | ParserConfigurationException e) {
 			throw new ModelSerializationException(e);
 		}
 	}

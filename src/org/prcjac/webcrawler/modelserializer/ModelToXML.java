@@ -73,14 +73,10 @@ public class ModelToXML {
 			DOMSource source = new DOMSource(document);
 			StreamResult result = new StreamResult(os);
 			transformer.transform(source, result);
-		} catch (TransformerException e) {
-			throw new ModelSerializationException(e);
-		} catch (SAXException e) {
-			throw new ModelSerializationException(e);
-		} catch (ParserConfigurationException e) {
+		} catch (TransformerException | ParserConfigurationException
+				| SAXException e) {
 			throw new ModelSerializationException(e);
 		}
-
 	}
 
 	private void buildPageElementAndAppend(final Page page,
