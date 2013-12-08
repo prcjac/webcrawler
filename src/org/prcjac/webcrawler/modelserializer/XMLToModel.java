@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,11 +14,8 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
 import org.prcjac.webcrawler.model.Page;
-import org.prcjac.webcrawler.model.Relationship;
 import org.prcjac.webcrawler.model.Site;
-import org.prcjac.webcrawler.model.impl.PageImpl;
-import org.prcjac.webcrawler.model.impl.RelationshipImpl;
-import org.prcjac.webcrawler.model.impl.SiteImpl;
+import org.prcjac.webcrawler.model.impl.SiteBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -40,6 +36,8 @@ public class XMLToModel {
 	private final Map<URI, Set<URI>> _outgoingRelationship = new LinkedHashMap<URI, Set<URI>>();
 	private final Map<URI, Page> _uriToPage = new LinkedHashMap<URI, Page>();
 
+	private SiteBuilder _siteBuilder = null;
+
 	public XMLToModel(final InputStream is) {
 		_is = is;
 	}
@@ -48,6 +46,8 @@ public class XMLToModel {
 		_incomingRelationship.clear();
 		_outgoingRelationship.clear();
 		_uriToPage.clear();
+
+		_siteBuilder = new SiteBuilder();
 
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -72,91 +72,56 @@ public class XMLToModel {
 	protected Site getSiteFromDocument(final Document document) {
 		Element relationshipRootElement = document.getDocumentElement();
 		URI rootURI = URI.create(relationshipRootElement.getAttribute("rootURI"));
-		Set<Page> pages = pagesFromRootElementChildren(relationshipRootElement.getChildNodes());
-		for (Page page : pages) {
-			URI pageUri = page.getURI();
-			if (_outgoingRelationship.get(pageUri) == null) {
-				_outgoingRelationship.put(pageUri, new LinkedHashSet<URI>());
-			}
-			if (_incomingRelationship.get(pageUri) == null) {
-				_incomingRelationship.put(pageUri, new LinkedHashSet<URI>());
-			}
-			for (URI targetURI : _outgoingRelationship.get(pageUri)) {
-				Relationship<Page, Page> outgoingRelationship = new RelationshipImpl<Page, Page>(page, _uriToPage.get(targetURI));
-				((PageImpl) page).addOutgoingRelationship(outgoingRelationship);
-			}
-			for (URI targetURI : _incomingRelationship.get(pageUri)) {
-				Relationship<Page, Page> incomingRelationship = new RelationshipImpl<Page, Page>(_uriToPage.get(targetURI), page);
-				((PageImpl) page).addIncomingRelationship(incomingRelationship);
-			}
-		}
-		return new SiteImpl(rootURI, pages);
+		_siteBuilder.setRootURI(rootURI);
+		pagesFromRootElementChildren(relationshipRootElement.getChildNodes());
+		return _siteBuilder.build();
 	}
 
-	protected Set<Page> pagesFromRootElementChildren(final NodeList children) {
-		Set<Page> pages = new LinkedHashSet<Page>();
+	protected void pagesFromRootElementChildren(final NodeList children) {
 		for (int i = 0; i < children.getLength(); i++) {
 			if (children.item(i) instanceof Element) {
 				Element pageElement = (Element) children.item(i);
 				if (pageElement.getNamespaceURI() == ModelToXML.NAMESPACE
 						&& pageElement.getNodeName() == ModelToXML.PAGE) {
 					URI pageURI = URI.create(pageElement.getAttribute("pageURI"));
-					boolean isRoot = pageElement.getAttribute("id").equals("root");
-					Set<URI> outgoingURIs = outgoingURIFromPageChildren(pageElement.getChildNodes());
-					Page page = new PageImpl(pageURI, isRoot);
-					_uriToPage.put(pageURI, page);
-					pages.add(page);
-
-					for (URI uri : outgoingURIs) {
-						addRelationship(pageURI, uri, _outgoingRelationship);
-						addRelationship(uri, pageURI, _incomingRelationship);
+					if (pageElement.getAttribute("id").equals("root")) {
+						_siteBuilder.addRootPage(pageURI);
+					} else {
+						_siteBuilder.addPage(pageURI);
 					}
+
+					outgoingURIFromPageChildren(pageElement.getChildNodes(), pageURI);
 				}
 			}
 		}
-		return pages;
 	}
 
-	protected Set<URI> outgoingURIFromPageChildren(final NodeList children) {
-		Set<URI> outGoing = new LinkedHashSet<URI>();
+	protected void outgoingURIFromPageChildren(final NodeList children, final URI source) {
 		for (int i = 0; i < children.getLength(); i++) {
 			if (children.item(i) instanceof Element) {
 				Element outgoingElement = (Element) children.item(i);
 				if (outgoingElement.getNamespaceURI() == ModelToXML.NAMESPACE
 						&& outgoingElement.getNodeName() == ModelToXML.OUTGOING) {
-					outGoing.add(URI.create(outgoingElement.getTextContent()));
+					_siteBuilder.addRelationship(source, URI.create(outgoingElement.getTextContent()));
 				}
 			}
 		}
-		return outGoing;
-	}
-
-	private static void addRelationship(final URI source, final URI target, final Map<URI, Set<URI>> relationshipMap) {
-		Set<URI> targetSet = relationshipMap.get(source);
-		if (targetSet == null) {
-			targetSet = new LinkedHashSet<URI>();
-			relationshipMap.put(source, targetSet);
-		}
-		targetSet.add(target);
 	}
 
 	private final class SchemaErrorHandler implements ErrorHandler {
 
 		@Override
 		public void error(final SAXParseException exception) throws SAXException {
-			System.err.println(exception);
 			throw exception;
 		}
 
 		@Override
 		public void fatalError(final SAXParseException exception) throws SAXException {
-			System.err.println(exception);
 			throw exception;
 		}
 
 		@Override
 		public void warning(final SAXParseException exception) throws SAXException {
-			System.err.println(exception);
 		}
 
 	}
