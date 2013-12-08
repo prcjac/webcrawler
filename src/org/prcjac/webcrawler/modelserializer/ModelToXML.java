@@ -42,7 +42,7 @@ public class ModelToXML {
 		_site = site;
 	}
 
-	public void serializeSiteToInputSource(final OutputStream os)
+	public void serializeSiteToOutputSource(final OutputStream os)
 			throws IOException, ModelSerializationException {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
