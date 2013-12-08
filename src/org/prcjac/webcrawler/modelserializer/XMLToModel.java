@@ -1,5 +1,6 @@
 package org.prcjac.webcrawler.modelserializer;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.LinkedHashMap;
@@ -9,6 +10,7 @@ import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
@@ -21,6 +23,7 @@ import org.prcjac.webcrawler.model.impl.SiteImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * Serializes an XML stream to a {@link Site}.
@@ -39,24 +42,31 @@ public class XMLToModel {
 		_is = is;
 	}
 
-	public Site getSiteFromInputSource() throws Exception {
+	public Site getSiteFromInputSource() throws IOException,
+			ModelSerializationException {
 		_incomingRelationship.clear();
 		_outgoingRelationship.clear();
 		_uriToPage.clear();
 
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setValidating(false);
-		factory.setNamespaceAware(true);
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			factory.setValidating(false);
+			factory.setNamespaceAware(true);
 
-		SchemaFactory schemaFactory = SchemaFactory
-				.newInstance("http://www.w3.org/2001/XMLSchema");
-		Schema schema = schemaFactory.newSchema(XMLToModel.class
-				.getResource("../resources/webcrawler.xsd"));
-		factory.setSchema(schema);
+			SchemaFactory schemaFactory = SchemaFactory
+					.newInstance("http://www.w3.org/2001/XMLSchema");
+			Schema schema = schemaFactory.newSchema(XMLToModel.class
+					.getResource("../resources/webcrawler.xsd"));
+			factory.setSchema(schema);
 
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		Document document = builder.parse(_is);
-		return getSiteFromDocument(document);
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(_is);
+			return getSiteFromDocument(document);
+		} catch (SAXException e) {
+			throw new ModelSerializationException(e);
+		} catch (ParserConfigurationException e) {
+			throw new ModelSerializationException(e);
+		}
 	}
 
 	// We can afford to make assumptions since the document will have been
