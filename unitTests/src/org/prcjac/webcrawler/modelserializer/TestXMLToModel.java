@@ -13,11 +13,11 @@ import org.junit.Test;
 import org.prcjac.webcrawler.model.Page;
 import org.prcjac.webcrawler.model.Site;
 
-public class TestModelSerializer {
+public class TestXMLToModel {
 
 	@Test
 	public void testSerializeToModel() throws URISyntaxException, IOException, ModelSerializationException {
-		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/example1.xml").toURI())));
+		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestXMLToModel.class.getResource("resources/example1.xml").toURI())));
 		Site site = serializer.getSite();
 		assertEquals(URI.create("www.example.com"), site.getRootURI());
 		Page rootPage = site.getRootPage();
@@ -73,19 +73,19 @@ public class TestModelSerializer {
 
 	@Test(expected = ModelSerializationException.class)
 	public void testInvalidFailsGracefully1() throws URISyntaxException, IOException, ModelSerializationException {
-		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/invalid-no-rootURI.xml").toURI())));
+		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestXMLToModel.class.getResource("resources/invalid-no-rootURI.xml").toURI())));
 		serializer.getSite();
 	}
 
 	@Test(expected = ModelSerializationException.class)
 	public void testInvalidFailsGracefully2() throws URISyntaxException, IOException, ModelSerializationException {
-		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/invalid-rogue-element.xml").toURI())));
+		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestXMLToModel.class.getResource("resources/invalid-rogue-element.xml").toURI())));
 		serializer.getSite();
 	}
 
 	@Test(expected = ModelSerializationException.class)
 	public void testInvalidFailsGracefully3() throws URISyntaxException, IOException, ModelSerializationException {
-		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/empty.xml").toURI())));
+		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestXMLToModel.class.getResource("resources/empty.xml").toURI())));
 		serializer.getSite();
 	}
 }
