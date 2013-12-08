@@ -64,6 +64,11 @@ public class TestModelSerializer {
 		assertEquals(0, page3.getOutgoingRelationships().size());
 		assertEquals(1, page3.getIncomingRelationships().size());
 		assertTrue(page3.getIncomingPages().contains(rootPage));
+
+		assertEquals(rootPage, site.getPageFromURI(new URI("/")));
+		assertEquals(page1, site.getPageFromURI(new URI("page1.html")));
+		assertEquals(page2, site.getPageFromURI(new URI("page2.html")));
+		assertEquals(page3, site.getPageFromURI(new URI("page3.html")));
 	}
 
 	@Test(expected = ModelSerializationException.class)
