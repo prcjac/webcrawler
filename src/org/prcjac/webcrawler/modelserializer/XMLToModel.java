@@ -23,7 +23,9 @@ import org.prcjac.webcrawler.model.impl.SiteImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Serializes an XML stream to a {@link Site}.
@@ -57,6 +59,7 @@ public class XMLToModel {
 			factory.setSchema(schema);
 
 			DocumentBuilder builder = factory.newDocumentBuilder();
+			builder.setErrorHandler(new SchemaErrorHandler());
 			Document document = builder.parse(_is);
 			return getSiteFromDocument(document);
 		} catch (SAXException | ParserConfigurationException e) {
@@ -129,5 +132,23 @@ public class XMLToModel {
 			relationshipMap.put(source, targetSet);
 		}
 		targetSet.add(target);
+	}
+
+	private final class SchemaErrorHandler implements ErrorHandler {
+
+		@Override
+		public void error(final SAXParseException exception) throws SAXException {
+			throw exception;
+		}
+
+		@Override
+		public void fatalError(final SAXParseException exception) throws SAXException {
+			throw exception;
+		}
+
+		@Override
+		public void warning(final SAXParseException exception) throws SAXException {
+		}
+
 	}
 }

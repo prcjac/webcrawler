@@ -65,4 +65,10 @@ public class TestModelSerializer {
 		assertEquals(1, page3.getIncomingRelationships().size());
 		assertTrue(page3.getIncomingPages().contains(rootPage));
 	}
+
+	@Test(expected = ModelSerializationException.class)
+	public void testInvalidFailsGracefully1() throws URISyntaxException, IOException, ModelSerializationException {
+		XMLToModel serializer = new XMLToModel(new FileInputStream(new File(TestModelSerializer.class.getResource("resources/invalid-no-rootURI.xml").toURI())));
+		Site site = serializer.getSite();
+	}
 }

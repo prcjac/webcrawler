@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<relationships xmlns="http://www.prcjac.org/webcrawler"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<page id="root" pageURI="/">
+		<outgoing>page1.html</outgoing>
+		<outgoing>page2.html</outgoing>
+		<outgoing>page3.html</outgoing>
+	</page>
+	<page pageURI="page1.html">
+		<outgoing>page2.html</outgoing>
+	</page>
+	<page pageURI="page2.html">
+		<outgoing>/</outgoing>
+	</page>
+	<page pageURI="page3.html" />
+</relationships> 
