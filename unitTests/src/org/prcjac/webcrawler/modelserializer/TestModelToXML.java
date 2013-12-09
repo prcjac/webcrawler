@@ -31,7 +31,7 @@ public class TestModelToXML {
 	}
 
 	public Site createSite() {
-		Page root = new PageImpl(URI.create("/"), true);
+		Page root = new PageImpl(URI.create(""), true);
 		Page page1 = new PageImpl(URI.create("page1.html"), false);
 		Page page2 = new PageImpl(URI.create("page2.html"), false);
 		Page page3 = new PageImpl(URI.create("page3.html"), false);

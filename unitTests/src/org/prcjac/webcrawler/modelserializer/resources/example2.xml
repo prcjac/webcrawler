@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <relationships rootURI="http://www.example.com/" xmlns="http://www.prcjac.org/webcrawler">
-  <page id="root" pageURI="/">
+  <page id="root" pageURI="">
     <outgoing>page1.html</outgoing>
     <outgoing>page2.html</outgoing>
     <outgoing>page3.html</outgoing>
@@ -13,6 +13,6 @@
     <outgoing>page3.html</outgoing>
   </page>
   <page pageURI="page3.html">
-    <outgoing>/</outgoing>
+    <outgoing/>
   </page>
 </relationships>
